@@ -1,0 +1,27 @@
+h1 {
+	font-family : Tahoma;
+	font-weight : bold;
+	font-size : x-large;
+	background-color : Blue;
+	text-align : center;
+	color : White;
+}
+h2 {
+	font-family : Tahoma;
+	font-size : larger;
+	font-weight : bold;
+}
+h3 {
+	font-family : Tahoma;
+	font-size : medium;
+	font-weight : bold;
+	text-align : left;
+	background-color : Blue;
+}
+
+body {
+	font-family : Tahoma;
+	font-style : normal;
+	background-color : #FFFFCC;
+	font-size : 12px;
+}
