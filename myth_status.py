@@ -26,6 +26,9 @@ except:
 import urllib
 from xml.dom import minidom
 
+# Url of the MythTV status page.
+STATUS_URL = "http://mythtv.banter.local:6544/xml"
+
 # Return human readable file sizes.
 def sizeof_fmt(num):
     for x in ['bytes','KB','MB','GB','TB']:
@@ -36,10 +39,11 @@ def sizeof_fmt(num):
 
 def get_xml_data():
     """
+    Get the storage information from the MythTV xml status page.
 
     """
     output = '' 
-    dom = minidom.parse(urllib.urlopen("http://mythtv.banter.local:6544/xml"))
+    dom = minidom.parse(urllib.urlopen(STATUS_URL))
     
     #info = []
     #for node in dom.getElementsByTagName("Load"):
@@ -61,12 +65,12 @@ def get_xml_data():
 
     output = 'Total disk space: %s with %s used' % (drive_total_total, total_used)
 
-    #print info
     return output
 
 def get_myth_data():
     """
-
+    Uses the python bindings to get information about the tuners,
+    recent recordings and upcoming recordings.
     """
     myMyth = MythTV()
 
@@ -87,17 +91,14 @@ def get_myth_data():
             status = "Idle"
 
         output = output + "%s (%s) %s\n" % (recorder_data.hostname, recorder_data.cardid, status)
-    #print output
 
     upcoming_recordings = myMyth.getUpcomingRecordings()
     upcoming = ''
-    #print "Scheduled recordings:"
     for i in range(len(upcoming_recordings)):
         upcoming = upcoming + "%s - %s (%s)\n" % (upcoming_recordings[i].starttime, upcoming_recordings[i].title, upcoming_recordings[i].channame)
 
         if i > 3:
             break
-    #print upcoming
     output = output + "\nScheduled recordings:\n%s" % (upcoming)
     return output
 
