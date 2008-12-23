@@ -55,15 +55,22 @@ def get_xml_data():
 
     drive_total_total = ''
     drive_total_used = ''
-    percent_used = 0
+    drive_total_free = ''
+    int_total_used = 0
+    int_total = 0
+    int_free = 0
     for key in bitref.attributes.keys():
         #print key, bitref.attributes[key].value
         if (key == "drive_total_total"):
-            drive_total_total = sizeof_fmt(int(bitref.attributes[key].value)*1000)
+            drive_total_total = sizeof_fmt(int(bitref.attributes[key].value)*1000000)
+            int_total = int(bitref.attributes[key].value)
         elif (key == "drive_total_used"):
-            total_used = sizeof_fmt(int(bitref.attributes[key].value)*1000)
+            total_used = sizeof_fmt(int(bitref.attributes[key].value)*1000000)
+            int_total_used  = int(bitref.attributes[key].value)
 
-    output = 'Total disk space: %s with %s used' % (drive_total_total, total_used)
+    int_free = int_total - int_total_used
+    drive_total_free = sizeof_fmt(int_free *1000000)
+    output = 'Total disk space: %s with %s used (% s free)' % (drive_total_total, total_used, drive_total_free)
 
     return output
 
@@ -106,8 +113,8 @@ def main():
     """
 
     """
-    print get_xml_data()
-    print get_myth_data()
+    print >> sys.stdout, get_xml_data()
+    print >> sys.stdout, get_myth_data()
 
 if __name__ == '__main__':
     main()
