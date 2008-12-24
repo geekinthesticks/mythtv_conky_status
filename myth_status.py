@@ -24,7 +24,13 @@ except:
     print "MythTV module cannot be initialized."
 
 import urllib
+from optparse import OptionParser
 from xml.dom import minidom
+
+class Usage(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
 
 # Url of the MythTV status page.
 STATUS_URL = "http://mythtv.banter.local:6544/xml"
@@ -74,47 +80,83 @@ def get_xml_data():
 
     return output
 
-def get_myth_data():
+def get_myth_data(tuners, scheduled, recorded):
     """
     Uses the python bindings to get information about the tuners,
     recent recordings and upcoming recordings.
     """
     myMyth = MythTV()
+    output = ''
 
-    recorders = myMyth.getRecorderList()
+    if (tuners):
+        recorders = myMyth.getRecorderList()
+        output = 'Tuners:\n'
+        status = 'Idle'
+        for i in range(len(recorders)):
+            recorder_data = myMyth.getRecorderDetails(recorders[i])
+            is_recording = myMyth.isRecording(recorders[i])
+            if (is_recording):
+                status = "Recording"
+                # Get the name of the recording.
+                program = myMyth.getCurrentRecording(recorders[i])
+                status = "Recording: %s (%s)" % (program.title, program.recgroup)
+            else:
+                status = "Idle"
 
+            output = output + "%s (%s) %s\n" % (recorder_data.hostname, recorder_data.cardid, status)
 
-    output = 'Tuners:\n'
-    status = 'Idle'
-    for i in range(len(recorders)):
-        recorder_data = myMyth.getRecorderDetails(recorders[i])
-        is_recording = myMyth.isRecording(recorders[i])
-        if (is_recording):
-            status = "Recording"
-            # Get the name of the recording.
-            program = myMyth.getCurrentRecording(recorders[i])
-            status = "Recording: %s (%s)" % (program.title, program.recgroup)
-        else:
-            status = "Idle"
+    if (scheduled):
+        upcoming_recordings = myMyth.getUpcomingRecordings()
+        upcoming = ''
+        for i in range(len(upcoming_recordings)):
+            upcoming = upcoming + "%s - %s (%s)\n" % (upcoming_recordings[i].starttime, upcoming_recordings[i].title, upcoming_recordings[i].channame)
 
-        output = output + "%s (%s) %s\n" % (recorder_data.hostname, recorder_data.cardid, status)
+            if i > 3:
+                break
+        output = output + "\nScheduled recordings:\n%s" % (upcoming)
 
-    upcoming_recordings = myMyth.getUpcomingRecordings()
-    upcoming = ''
-    for i in range(len(upcoming_recordings)):
-        upcoming = upcoming + "%s - %s (%s)\n" % (upcoming_recordings[i].starttime, upcoming_recordings[i].title, upcoming_recordings[i].channame)
+    if (recorded):
+        recorded_programs = myMyth.getUpcomingRecordings()
+        recorded = ''
+        for i in range(len(recorded_programs)):
+            recorded = recorded + "%s - %s (%s)\n" % (recorded_programs[i].starttime, recorded_programs[i].title, recorded_programs[i].channame)
 
-        if i > 3:
-            break
-    output = output + "\nScheduled recordings:\n%s" % (upcoming)
+            if i > 3:
+                break
+        output = output + "\nRecent Recordings:\n%s" % (recorded)
+        
+
     return output
 
 def main():
     """
 
     """
-    print >> sys.stdout, get_xml_data()
-    print >> sys.stdout, get_myth_data()
+    usage = "usage: %prog [options] arg"
+    parser = OptionParser(usage)
+    parser.add_option("-d", "--disk-space",
+                  help="Show available disk space", action = "store_true", default = False, dest = "disk_space")
+
+    parser.add_option("-t", "--tuners",
+                  help="Show information about tuners", action = "store_true", default = False, dest = "tuners")
+
+    parser.add_option("-s", "--scheduled",
+                  help="Show next five scheduled programs", action = "store_true", default = False, dest = "scheduled")
+
+    parser.add_option("-r", "--recorded",
+                  help="Show the last five scheduled programs", action = "store_true", default = False, dest = "recorded")
+
+    (options, args) = parser.parse_args()
+    #if len(args) != 1:
+    #    parser.error("incorrect number of arguments")
+    #if options.verbose:
+    #    print "reading %s..." % options.filename
+
+
+
+    if options.disk_space:
+        print >> sys.stdout, get_xml_data()
+    print >> sys.stdout, get_myth_data(options.tuners, options.scheduled, options.recorded)
 
 if __name__ == '__main__':
     main()
