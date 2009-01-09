@@ -80,7 +80,7 @@ def get_xml_data():
 
     return output
 
-def get_myth_data(tuners, scheduled, recorded):
+def get_myth_data(tuners, scheduled, recorded, expiring):
     """
     Uses the python bindings to get information about the tuners,
     recent recordings and upcoming recordings.
@@ -124,6 +124,16 @@ def get_myth_data(tuners, scheduled, recorded):
             if i > 3:
                 break
         output = output + "\nRecent Recordings:\n%s" % (recorded)
+
+    if (expiring):
+        expiring_programs = myMyth.getExpiring()
+        expiring = ''
+        for i in range(len(recorded_programs)):
+            expiring = expiring + "%s - %s (%s)\n" % (expiring_programs[i].starttime, expiring_programs[i].title, expiring_programs[i].channame)
+
+            if i > 3:
+                break
+        output = output + "\nRecordings about to expire:\n%s" % (expiring)
         
 
     return output
@@ -146,17 +156,14 @@ def main():
     parser.add_option("-r", "--recorded",
                   help="Show the last five scheduled programs", action = "store_true", default = False, dest = "recorded")
 
+    parser.add_option("-e", "--expiring",
+                  help="Show the next five programs due to auto expire", action = "store_true", default = False, dest = "expire")
+
     (options, args) = parser.parse_args()
-    #if len(args) != 1:
-    #    parser.error("incorrect number of arguments")
-    #if options.verbose:
-    #    print "reading %s..." % options.filename
-
-
 
     if options.disk_space:
         print >> sys.stdout, get_xml_data()
-    print >> sys.stdout, get_myth_data(options.tuners, options.scheduled, options.recorded)
+    print >> sys.stdout, get_myth_data(options.tuners, options.scheduled, options.recorded, options.expire)
 
 if __name__ == '__main__':
     main()
