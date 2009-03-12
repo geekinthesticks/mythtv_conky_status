@@ -13,7 +13,7 @@
 ##   GNU General Public License for more details.
 
 
-
+# python-mysqldb
 
 # Display mythtv status to stdout.
 try:
@@ -162,8 +162,8 @@ def main():
     (options, args) = parser.parse_args()
 
     if options.disk_space:
-        print >> sys.stdout, get_xml_data()
-    print >> sys.stdout, get_myth_data(options.tuners, options.scheduled, options.recorded, options.expire)
+        print get_xml_data()
+    print get_myth_data(options.tuners, options.scheduled, options.recorded, options.expire)
 
 if __name__ == '__main__':
     main()
