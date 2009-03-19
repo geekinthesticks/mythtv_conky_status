@@ -12,6 +12,8 @@
 ##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ##   GNU General Public License for more details.
 
+# An example showing how to use mod_python to show
+# your Myth backend's status on a web page.
 
 from mod_python import apache
 import urllib, time
