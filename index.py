@@ -39,6 +39,7 @@ def sizeof_fmt(num):
 
 def get_date_time():
     """
+    Returns a date time formatted as an html header.
     """
     timestamp = datetime.datetime.now()
     date_time =  timestamp.strftime('%a %b %Y,  %H:%M %p') 
@@ -47,7 +48,8 @@ def get_date_time():
 
 def get_xml_data():
     """
-
+    Query Myth backend and get xml data. Returns the data as
+    an html formatted string for writing out to a web page.
     """
     output = '' 
     dom = minidom.parse(urllib.urlopen("http://mythtv.banter.local:6544/xml"))
@@ -85,7 +87,9 @@ def get_xml_data():
 
 def get_myth_data():
     """
-
+    Use the python bindings to query Mythtv for data that can be
+    obtained from the xml status page. Returns the data in
+    html.
     """
     myMyth = MythTV()
 
