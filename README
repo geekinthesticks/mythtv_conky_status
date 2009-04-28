@@ -1,0 +1,41 @@
+Myth Status - Display the Status of a MythTV Backend.
+=====================================================
+There are already several methods of displaying the status of a Myth backend, including MythWeb. So why does the world need another one? The short answer was that none of the existing ones did exactly what I wanted.
+
+Myth Status is written in python and uses the python bindings for MythTV. it is a command line application that diplays its data to stdout. I se it primarily to show the status of my backend in Conky.
+
+Included in this distribution is a sample script that shows you how to display the status of your Myth backend in a web page using mod-python. This is ideal for viewing on a mobile device, such as a phone.
+
+Installation.
+============
+Myth Status requires the python bindings for MythTV. Please note that if you have the python bindings for version 0.21, you will need to install the python bindings included with Myth Status. These contain various new functions that aren't included with the 0.21 bindings. These should be included with the 0.22 release of MythTV. Installing the updated bindings won't affect any other programs that use the bindings from MythTV version 0.21.
+
+You do not have to install either myth frontend or mythbackend on a computer to use Myth Status, only the python bindings.
+
+Installing the Python Bindings.
+===============================
+
+sudo python setup.py install
+
+* Check that you have a file called mysql.txt in either ~/.mythtv or /etc/mythtv. If you don't have one, you can create one:
+
+mkdir ~/.mythtv
+vim mysql.txt
+
+As a minimum you should have the following entries in mysql.txt:
+
+# ip address of your Myth backend
+DBHostName=192.168.0.2
+
+# Name of the user to access the database
+DBUserName=mythtv
+
+# Password
+DBPassword=mythtv
+
+# database name
+DBName=mythconverg
+
+Configure Myth Backend.
+=======================
+By default the backend won't allow connections to it's MySQL database from anything other than the localhost.
