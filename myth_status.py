@@ -13,7 +13,6 @@
 ##   GNU General Public License for more details.
 
 
-# python-mysqldb
 
 # Display mythtv status to stdout.
 try:
@@ -105,35 +104,35 @@ def get_myth_data(tuners, scheduled, recorded, expiring):
 
             output = output + "%s (%s) %s\n" % (recorder_data.hostname, recorder_data.cardid, status)
 
-    if (scheduled):
+    if (scheduled > 0):
         upcoming_recordings = myMyth.getUpcomingRecordings()
-        upcoming = ''
+        upcoming_progs = ''
         for i in range(len(upcoming_recordings)):
-            upcoming = upcoming + "%s - %s (%s)\n" % (upcoming_recordings[i].starttime, upcoming_recordings[i].title, upcoming_recordings[i].channame)
+            upcoming_progs = upcoming_progs + "%s - %s (%s)\n" % (upcoming_recordings[i].starttime, upcoming_recordings[i].title, upcoming_recordings[i].channame)
 
-            if i > 3:
+            if i > scheduled:
                 break
-        output = output + "\nScheduled recordings:\n%s" % (upcoming)
+        output = output + "\nScheduled recordings:\n%s" % (upcoming_progs)
 
-    if (recorded):
+    if (recorded > 0):
         recorded_programs = myMyth.getUpcomingRecordings()
-        recorded = ''
+        recorded_progs = ''
         for i in range(len(recorded_programs)):
-            recorded = recorded + "%s - %s (%s)\n" % (recorded_programs[i].starttime, recorded_programs[i].title, recorded_programs[i].channame)
+            recorded_progs = recorded_progs + "%s - %s (%s)\n" % (recorded_programs[i].starttime, recorded_programs[i].title, recorded_programs[i].channame)
 
-            if i > 3:
+            if i > recorded:
                 break
-        output = output + "\nRecent Recordings:\n%s" % (recorded)
+        output = output + "\nRecent Recordings:\n%s" % (recorded_progs)
 
-    if (expiring):
+    if (expiring > 0):
         expiring_programs = myMyth.getExpiring()
-        expiring = ''
-        for i in range(len(recorded_programs)):
-            expiring = expiring + "%s - %s (%s)\n" % (expiring_programs[i].starttime, expiring_programs[i].title, expiring_programs[i].channame)
+        expiring_progs = ''
+        for i in range(len(expiring_programs)):
+            expiring_progs = expiring_progs + "%s - %s (%s)\n" % (expiring_programs[i].starttime, expiring_programs[i].title, expiring_programs[i].channame)
 
-            if i > 3:
+            if i > expiring:
                 break
-        output = output + "\nRecordings about to expire:\n%s" % (expiring)
+        output = output + "\nRecordings about to expire:\n%s" % (expiring_progs)
         
 
     return output
@@ -151,13 +150,13 @@ def main():
                   help="Show information about tuners", action = "store_true", default = False, dest = "tuners")
 
     parser.add_option("-s", "--scheduled",
-                  help="Show next five scheduled programs", action = "store_true", default = False, dest = "scheduled")
+                  help="Show scheduled programs", action = "store_true", default = 0, dest = "scheduled")
 
     parser.add_option("-r", "--recorded",
-                  help="Show the last five scheduled programs", action = "store_true", default = False, dest = "recorded")
+                  help="Show the most recent programs", action = "store_true", default = 0, dest = "recorded")
 
     parser.add_option("-e", "--expiring",
-                  help="Show the next five programs due to auto expire", action = "store_true", default = False, dest = "expire")
+                  help="Show  programs due to auto expire", action = "store_true", default = 0, dest = "expire")
 
     (options, args) = parser.parse_args()
 
