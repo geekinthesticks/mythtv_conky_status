@@ -115,7 +115,7 @@ def get_myth_data(tuners, scheduled, recorded, expiring):
         output = output + "\nScheduled recordings:\n%s" % (upcoming_progs)
 
     if (recorded > 0):
-        recorded_programs = myMyth.getUpcomingRecordings()
+        recorded_programs = myMyth.getRecordingList("Delete")
         recorded_progs = ''
         for i in range(len(recorded_programs)):
             recorded_progs = recorded_progs + "%s - %s (%s)\n" % (recorded_programs[i].starttime, recorded_programs[i].title, recorded_programs[i].channame)
