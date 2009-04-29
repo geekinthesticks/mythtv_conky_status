@@ -65,7 +65,6 @@ def get_xml_data():
     int_total = 0
     int_free = 0
     for key in bitref.attributes.keys():
-        #print key, bitref.attributes[key].value
         if (key == "drive_total_total"):
             drive_total_total = sizeof_fmt(int(bitref.attributes[key].value)*1000000)
             int_total = int(bitref.attributes[key].value)
@@ -107,31 +106,39 @@ def get_myth_data(tuners, scheduled, recorded, expiring):
     if (scheduled > 0):
         upcoming_recordings = myMyth.getUpcomingRecordings()
         upcoming_progs = ''
-        for i in range(len(upcoming_recordings)):
-            upcoming_progs = upcoming_progs + "%s - %s (%s)\n" % (upcoming_recordings[i].starttime, upcoming_recordings[i].title, upcoming_recordings[i].channame)
-
-            if i > scheduled:
-                break
+        if ((len(upcoming_recordings)) > scheduled):
+            for recording in upcoming_recordings[0:scheduled]:
+                upcoming_progs = upcoming_progs + "%s - %s (%s)\n" % (recording.starttime, recording.title, recording.channame)
+            
+        else:    
+            for recording in range(upcoming_recordings):
+                upcoming_progs = upcoming_progs + "%s - %s (%s)\n" % (recording.starttime, recording.title, recording.channame)
+            
         output = output + "\nScheduled recordings:\n%s" % (upcoming_progs)
 
     if (recorded > 0):
         recorded_programs = myMyth.getRecordingList("Delete")
         recorded_progs = ''
-        for i in range(len(recorded_programs)):
-            recorded_progs = recorded_progs + "%s - %s (%s)\n" % (recorded_programs[i].starttime, recorded_programs[i].title, recorded_programs[i].channame)
+        if ((len(recorded_programs)) > recorded):
+            for  recording in recorded_programs[0:recorded]:
+                recorded_progs = recorded_progs + "%s - %s (%s)\n" % (recording.starttime, recording.title, recording.channame)
+        else:                
+            for recording in recorded_programs:
+                recorded_progs = recorded_progs + "%s - %s (%s)\n" % (recoring.starttime, recording.title, recording.channame)
 
-            if i > recorded:
-                break
         output = output + "\nRecent Recordings:\n%s" % (recorded_progs)
 
     if (expiring > 0):
         expiring_programs = myMyth.getExpiring()
         expiring_progs = ''
-        for i in range(len(expiring_programs)):
-            expiring_progs = expiring_progs + "%s - %s (%s)\n" % (expiring_programs[i].starttime, expiring_programs[i].title, expiring_programs[i].channame)
-
-            if i > expiring:
-                break
+        if ((len(expiring_programs)) > expiring):
+            for  recording in expiring_programs[0:expiring]:
+                expiring_progs = expiring_progs + "%s - %s (%s)\n" % (recording.starttime, recording.title, recording.channame)
+        else:
+            for  recording in expiring_programs:
+                expiring_progs = expiring_progs + "%s - %s (%s)\n" % (recording.starttime, recording.title, recording.channame)
+            
+            
         output = output + "\nRecordings about to expire:\n%s" % (expiring_progs)
         
 
@@ -150,13 +157,13 @@ def main():
                   help="Show information about tuners", action = "store_true", default = False, dest = "tuners")
 
     parser.add_option("-s", "--scheduled",
-                  help="Show scheduled programs", action = "store_true", default = 0, dest = "scheduled")
+                  help="Show scheduled programs", type="int", default = 0, dest = "scheduled")
 
     parser.add_option("-r", "--recorded",
-                  help="Show the most recent programs", action = "store_true", default = 0, dest = "recorded")
+                  help="Show the most recent programs", type="int", default = 0, dest = "recorded")
 
     parser.add_option("-e", "--expiring",
-                  help="Show  programs due to auto expire", action = "store_true", default = 0, dest = "expire")
+                  help="Show  programs due to auto expire", type="int", default = 0, dest = "expire")
 
     (options, args) = parser.parse_args()
 
