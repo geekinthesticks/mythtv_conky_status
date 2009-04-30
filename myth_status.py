@@ -22,8 +22,9 @@ try:
 except:
     print "MythTV module cannot be initialized."
 
-import urllib
+import os, urllib
 from optparse import OptionParser
+import ConfigParser
 from xml.dom import minidom
 
 class Usage(Exception):
@@ -32,7 +33,10 @@ class Usage(Exception):
 
 
 # Url of the MythTV status page.
-STATUS_URL = "http://mythtv.banter.local:6544/xml"
+STATUS_URL = "http://localhost:6544/xml"
+
+# Configuration file.
+# CONFIG_FILE = ".mythconkyconfig"
 
 # Return human readable file sizes.
 def sizeof_fmt(num):
@@ -41,14 +45,39 @@ def sizeof_fmt(num):
             return "%3.1f%s" % (num, x)
         num /= 1024.0
 
+def set_defaults():
+    """
+    Set up some defaults if the .mythconkyconfig file
+    does not exist.
+    """
 
-def get_xml_data():
+    config = ConfigParser.ConfigParser()
+    #config.read(os.path.expanduser("~/.mythconkyconfig")
+    config.add_section('mythtv')
+    config.set('mythtv', 'host', STATUS_URL)
+
+    # Writing our configuration file to 'example.cfg'
+    with open(os.path.expanduser("~/.mythconkyconfig"), 'wb') as configfile:
+        config.write(configfile)
+
+def read_config():
+    """
+    Read the configuration data.
+    """
+    config = ConfigParser.ConfigParser()
+    config.read(os.path.expanduser("~/.mythconkyconfig"))
+    host = config.get('mythtv', 'host', 1)
+    return host            
+
+
+
+def get_xml_data(host):
     """
     Get the storage information from the MythTV xml status page.
 
     """
     output = '' 
-    dom = minidom.parse(urllib.urlopen(STATUS_URL))
+    dom = minidom.parse(urllib.urlopen(host))
     
     #info = []
     #for node in dom.getElementsByTagName("Load"):
@@ -167,8 +196,21 @@ def main():
 
     (options, args) = parser.parse_args()
 
+    # Check the configuration file exists.
+    # If it doesn't create it with some defaults.
+    if not os.path.isfile((os.path.expanduser("~/.mythconkyconfig"))):
+        print "======================================"
+        print ".mythconkyconfig status does not exist."
+        print "Creating a file with default settings."
+        print "Please check your settings."
+        print "======================================"
+        set_defaults()
+        sys.exit()
+    else:
+        host = read_config()    
+        
     if options.disk_space:
-        print get_xml_data()
+        print get_xml_data(host)
     print get_myth_data(options.tuners, options.scheduled, options.recorded, options.expire)
 
 if __name__ == '__main__':
