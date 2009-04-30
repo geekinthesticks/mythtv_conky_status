@@ -1,11 +1,11 @@
 Installing the Python Bindings.
 ===============================
 
-Unpack the bindings:
+If you downloaded a compressed archive unpack the bindings. If you are
+using Myth Status the bindings are contained in the bindings
+subdirectory of your Myth Status directory.
 
-tar -xvzf MythTV-0.21.tar.gz
-
-cd MythTV-0.21
+cd bindings
 
 sudo python setup.py install
 
@@ -18,7 +18,7 @@ Python 2.5.2 (r252:60911, Oct  5 2008, 19:24:49)
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 
-In the pythong shell type:
+In the python shell type:
 
 from MythTV.MythTV import *
 
