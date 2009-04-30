@@ -107,6 +107,18 @@ Comment out the bind-address line and restart mysql:
 /etc/init.d/mysql restart
 
 
+Before You Run Myth Conky Status for the First Time.
+====================================================
+
+Myth Conky Status stores its configuration data in ~/.mythconkyconfig. Running the program will create a default configuration, which assumes that you have MythTV installed on your localhost.
+
+If your backend is installed in another computer, you must edit ~/.mythconkyconfig:
+
+[mythtv]
+host = http://mythtv.mydoamin.com:6544/xml
+
+Change "mythtv.mydomain.com" to the ip address or name of the computer where your backend is installed.
+
 Using Myth Conky Status Standalone.
 ===================================
 
