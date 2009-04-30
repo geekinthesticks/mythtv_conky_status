@@ -153,7 +153,7 @@ text_buffer_size 1024
 
 The following line will display the disk space useage, tuner status, the last five recorded programs and the next five scheduled programs. The display will be updated every 60 seconds.
 
-${color white}${execpi 60 ~/devel/myth_python_status/myth_status.py --disk-space --tuners --scheduled 5 --recorded 5}
+${color white}${execpi 60 ~/devel/myth_python_status/myth_conky_status.py --disk-space --tuners --scheduled 5 --recorded 5}
 
 
 Feature Requests, Bug Reports and Patches
