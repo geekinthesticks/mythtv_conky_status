@@ -124,7 +124,7 @@ Using Myth Conky Status Standalone.
 
 You can run myth_status from the command line:
 
-./myth_status -d -t -s 5 -e 5 -r 5
+./myth_conky_status -d -t -s 5 -e 5 -r 5
 
 This will show disk space useage, display information about the tuners, show the next five scheduled recordings, the next five programs due to be auto-expired and the last five recorded programs.
 
