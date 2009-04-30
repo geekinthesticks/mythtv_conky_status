@@ -1,21 +1,58 @@
+Myth Status
+Copyright Ian Barton 2009
+
+License (see COPYING file)
+==========================
+
+Myth Status is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+Myth Status is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 Myth Status - Display the Status of a MythTV Backend.
 =====================================================
 There are already several methods of displaying the status of a Myth backend, including MythWeb. So why does the world need another one? The short answer was that none of the existing ones did exactly what I wanted.
 
 Myth Status is written in python and uses the python bindings for MythTV. it is a command line application that diplays its data to stdout. I se it primarily to show the status of my backend in Conky.
 
-Included in this distribution is a sample script that shows you how to display the status of your Myth backend in a web page using mod-python. This is ideal for viewing on a mobile device, such as a phone.
+Dependencies.
+=============
+- Python (any recent version should work).
+- Python bindings for MythTV.
+- Python mysql library.
+
+In Ubuntu the following packages are required:
+
+python-dns
+python-mysqldb
+
+You will need to obtain the updated python-bindings from !!!!! as the bindings in MythTV V0.21 dont' contain all the require functions.
 
 Installation.
-============
+=============
 Myth Status requires the python bindings for MythTV. Please note that if you have the python bindings for version 0.21, you will need to install the python bindings included with Myth Status. These contain various new functions that aren't included with the 0.21 bindings. These should be included with the 0.22 release of MythTV. Installing the updated bindings won't affect any other programs that use the bindings from MythTV version 0.21.
 
-You do not have to install either myth frontend or mythbackend on a computer to use Myth Status, only the python bindings.
+You do *not* have to install either myth frontend or mythbackend on a computer to use Myth Status, only the python bindings.
 
 Installing the Python Bindings.
 ===============================
+The python bindings for MythTV are included in the python_bindings subirectory. To install them change from the directory where you installed myth_status and run:
 
+cd python_bindings
 sudo python setup.py install
+
+Once you have installed the python bindings, you need to tell them some information about your MythTV backend. If the computer where you install myth_status already has an installation of MythTV, you shouldn't need to do anything.
+
+If this is not the case you need to:
 
 * Check that you have a file called mysql.txt in either ~/.mythtv or /etc/mythtv. If you don't have one, you can create one:
 
@@ -30,12 +67,72 @@ DBHostName=192.168.0.2
 # Name of the user to access the database
 DBUserName=mythtv
 
-# Password
+# Password for the database
 DBPassword=mythtv
 
 # database name
 DBName=mythconverg
 
-Configure Myth Backend.
-=======================
-By default the backend won't allow connections to it's MySQL database from anything other than the localhost.
+Configure MySQL on the Myth Backend.
+====================================
+By default the backend won't allow connections to it's MySQL database from anything other than the localhost. On your Mythbackend server you will need to edit /etc/my.cnf:
+
+sudo vim /etc/mysql/my.cnf
+
+Find the section:
+
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+bind-address            = 127.0.0.1
+
+Comment out the bind-address line and restart mysql:
+
+/etc/init.d/mysql restart
+
+Using myth_status.
+====================
+You can run myth_status from the command line:
+
+./myth_status -d -t -s 5 -e 5 -r 5
+
+This will show disk space useage, display information about the tuners, show the next five scheduled recordings, the next five programs due to be auto-expired and the last five recorded programs.
+
+Omitting an option will supress output of information for that option. For the parameters that return information about recordings, putting a number after the option will limit the information to that number of programs.
+
+-d --disk-space
+  Information about disk space
+-t --tuners
+  Information about tuners
+-s --scheduled
+  Programs scheduled to be recorded. Append a number to set the
+  number of programs to display. Default is zero.
+-e --expiring
+  Programs scheduled to expire. Append a number to set the
+  number of programs to display. Default is zero.
+-r --recorded
+  Programs scheduled to be recorded. Append a number to set the
+  number of programs to display. Default is zero.
+
+Using Myth Statis with conky.
+=============================
+you will probably need to increase the text_buffer size in conky, or the output will be truncated. Enter the following in your .conkyrc:
+
+text_buffer_size 1024
+
+The following line will display the disk space useage, tuner status, the last five recorded programs and the next five scheduled programs. The display will be updated every 60 seconds.
+
+${color white}${execpi 60 ~/devel/myth_python_status/myth_status.py --disk-space --tuners --scheduled 5 --recorded 5}
+
+
+Feature Requests, Bug Reports and Patches
+=========================================
+
+Feature requests, bug reports and patches should all be filed in our
+Trac bug tracker at http://trac.wilkesley.org/projects/myth_status.
+
+
+For up to date information about Myth Status, see the website and Wiki:
+
+- http://trac.wilkesley.org/projects/myth_status
+
+
