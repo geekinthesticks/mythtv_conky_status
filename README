@@ -47,12 +47,12 @@ Installing the Python Bindings.
 ===============================
 The python bindings for MythTV are included in the python_bindings subirectory. To install them change from the directory where you installed myth_status and run:
 
-cd python_bindings
+cd bindings
 sudo python setup.py install
 
 Once you have installed the python bindings, you need to tell them some information about your MythTV backend. If the computer where you install myth_status already has an installation of MythTV, you shouldn't need to do anything.
 
-If this is not the case you need to:
+If you don't have either a myth frontend or backend installed you need to:
 
 * Check that you have a file called mysql.txt in either ~/.mythtv or /etc/mythtv. If you don't have one, you can create one:
 
